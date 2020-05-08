@@ -11,24 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.HashMap;
 
 @SpringBootApplication
-public class HomeAutomationApplication implements CommandLineRunner {
-
-	@Autowired
-	private DeviceConfigurationService deviceConfigurationService;
-
-	@Autowired
-	private DeviceConfigurationRepository deviceConfigurationRepository;
+public class HomeAutomationApplication {
 
 	public static void main(String[] args) {
-
 		SpringApplication.run(HomeAutomationApplication.class, args);
 	}
 
-	@Override
-	public void run(String... args) throws Exception {
-		deviceConfigurationService.saveAllDeviceConfigurations();
-
-		System.out.println(deviceConfigurationRepository.findByType("Fan_SCC_492134"));
-		System.out.println(deviceConfigurationRepository.findByType("Light_AAA_hg11"));
-	}
 }

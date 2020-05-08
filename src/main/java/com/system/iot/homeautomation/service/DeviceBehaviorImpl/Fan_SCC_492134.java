@@ -1,5 +1,6 @@
 package com.system.iot.homeautomation.service.DeviceBehaviorImpl;
 
+import com.system.iot.homeautomation.enums.DeviceConfigurationType;
 import com.system.iot.homeautomation.model.DeviceConfiguration;
 import com.system.iot.homeautomation.service.DeviceBehavior;
 
@@ -30,7 +31,7 @@ public class Fan_SCC_492134 implements DeviceBehavior {
         defAttributes.put("speed", "S3");
 
         DeviceConfiguration deviceConf = DeviceConfiguration.builder()
-                .type(this.getClass().getSimpleName())
+                .type(DeviceConfigurationType.valueOf(this.getClass().getSimpleName()))
                 .description(description)
                 .hardwareConfiguration(hardwareConf)
                 .parameters(parameters)

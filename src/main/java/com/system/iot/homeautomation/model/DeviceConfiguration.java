@@ -1,6 +1,9 @@
 package com.system.iot.homeautomation.model;
 
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.system.iot.homeautomation.enums.DeviceConfigurationType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,26 +15,30 @@ import javax.persistence.Id;
 import java.util.HashMap;
 
 
-@Getter
 @Builder
+@Getter
 @Setter
 @Accessors(fluent = true)
 @ToString
 public class DeviceConfiguration {
 
+        @JsonProperty
         @Id
         private String id;
 
-        private String type;
+        @JsonProperty
+        private DeviceConfigurationType type;
 
+        @JsonProperty
         private String description;
 
-        @Column(name = "hardware_configuration")
+        @JsonProperty("hardware_configuration")
         private HashMap<String, Object> hardwareConfiguration;
 
+        @JsonProperty
         private HashMap<String, Object> parameters;
 
-        @Column(name = "default_attributes")
+        @JsonProperty("default_attributes")
         private HashMap<String, Object> defaultAttributes;
 
 }
