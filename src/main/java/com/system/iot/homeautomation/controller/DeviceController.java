@@ -1,17 +1,23 @@
 package com.system.iot.homeautomation.controller;
 
-import com.system.iot.homeautomation.enums.DeviceConfigurationType;
+import com.system.iot.homeautomation.enums.CommandType;
 import com.system.iot.homeautomation.exception.DeviceConfigurationNotFoundException;
 import com.system.iot.homeautomation.exception.DeviceNotFoundException;
+import com.system.iot.homeautomation.model.Command;
 import com.system.iot.homeautomation.model.Device;
 import com.system.iot.homeautomation.model.DeviceConfiguration;
 import com.system.iot.homeautomation.repository.DeviceConfigurationRepository;
 import com.system.iot.homeautomation.repository.DeviceRepository;
+import com.system.iot.homeautomation.service.DeviceBehavior;
+import com.system.iot.homeautomation.service.DeviceBehaviorImpl.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +32,9 @@ public class DeviceController {
 
     @Autowired
     private DeviceConfigurationRepository deviceConfRepository;
+
+    @Autowired
+    private AutowireCapableBeanFactory autowireCapableBeanFactory;
 
     // Aggregate root
 
@@ -59,8 +68,6 @@ public class DeviceController {
                 .orElseThrow(() -> new DeviceNotFoundException(id));
 
         DeviceConfiguration deviceConfiguration = deviceConfRepository.findByType(device.deviceConfType());
-        Optional.ofNullable(deviceConfiguration)
-                .orElseThrow(() -> new DeviceConfigurationNotFoundException());
         device.deviceConfiguration(deviceConfiguration);
 
         return new EntityModel<>(device,
@@ -84,5 +91,15 @@ public class DeviceController {
     @DeleteMapping("/devices/{id}")
     void deleteDevice(@PathVariable String id) {
         deviceRepository.deleteById(id);
+    }
+
+    @PostMapping("/devices/{id}/execute")
+    public ArrayList<String> executeCommand(@PathVariable String id, @RequestBody Command command) throws Exception{
+        Device device = deviceRepository.findById(id)
+                .orElseThrow(() -> new DeviceNotFoundException(id));
+        DeviceBehavior deviceBehavior = (DeviceBehavior)Class.forName("com.system.iot.homeautomation.service.DeviceBehaviorImpl." +
+                device.deviceConfType().name()).newInstance();
+        autowireCapableBeanFactory.autowireBean(deviceBehavior);
+        return deviceBehavior.executeCommand(device, command);
     }
 }
